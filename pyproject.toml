@@ -7,7 +7,7 @@ name = "growth-ai"
 version = "0.1.0"
 description = "User behavior analytics and subscription conversion dashboard"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
   "numpy>=2.1",
   "openpyxl>=3.1",
