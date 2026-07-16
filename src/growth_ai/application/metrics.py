@@ -40,7 +40,9 @@ def _latest_timestamp(bundle: AnalyticsBundle) -> pd.Timestamp | None:
     return max(timestamps) if timestamps else None
 
 
-def _distinct_users_in_window(frame: pd.DataFrame, column: str, window_end: pd.Timestamp, days: int) -> int:
+def _distinct_users_in_window(
+    frame: pd.DataFrame, column: str, window_end: pd.Timestamp, days: int
+) -> int:
     if frame.empty or column not in frame.columns:
         return 0
     window_start = window_end - timedelta(days=days)
@@ -60,14 +62,20 @@ def _retention_rate(sessions: pd.DataFrame, latest_timestamp: pd.Timestamp | Non
     last_window_start = latest_timestamp - timedelta(days=30)
 
     first_users = set(
-        sessions[(sessions["login_time"] >= first_window_start) & (sessions["login_time"] <= first_window_end)][
-            "user_id"
-        ].dropna().astype(str)
+        sessions[
+            (sessions["login_time"] >= first_window_start)
+            & (sessions["login_time"] <= first_window_end)
+        ]["user_id"]
+        .dropna()
+        .astype(str)
     )
     last_users = set(
-        sessions[(sessions["login_time"] >= last_window_start) & (sessions["login_time"] <= latest_timestamp)][
-            "user_id"
-        ].dropna().astype(str)
+        sessions[
+            (sessions["login_time"] >= last_window_start)
+            & (sessions["login_time"] <= latest_timestamp)
+        ]["user_id"]
+        .dropna()
+        .astype(str)
     )
     if not first_users:
         return 0.0
@@ -78,7 +86,8 @@ def _feature_adoption(feature_usage: pd.DataFrame, total_users: int) -> dict[str
     if feature_usage.empty or total_users == 0 or "feature_name" not in feature_usage.columns:
         return {}
     adoption = (
-        feature_usage.groupby("feature_name")["user_id"].nunique().sort_values(ascending=False) / total_users
+        feature_usage.groupby("feature_name")["user_id"].nunique().sort_values(ascending=False)
+        / total_users
     )
     return {feature: round(rate * 100.0, 2) for feature, rate in adoption.items()}
 
@@ -100,7 +109,10 @@ def _pre_upgrade_feature_adoption(bundle: AnalyticsBundle, total_users: int) -> 
     if pre_upgrade.empty:
         return {}
 
-    adoption = pre_upgrade.groupby("feature_name")["user_id"].nunique().sort_values(ascending=False) / total_users
+    adoption = (
+        pre_upgrade.groupby("feature_name")["user_id"].nunique().sort_values(ascending=False)
+        / total_users
+    )
     return {feature: round(rate * 100.0, 2) for feature, rate in adoption.items()}
 
 
@@ -115,9 +127,13 @@ def calculate_kpis(bundle: AnalyticsBundle) -> KPIResult:
 
     total_users = int(users["user_id"].nunique()) if "user_id" in users.columns else 0
     trial_users = (
-        int(users.loc[users["plan"] == "trial", "user_id"].nunique()) if "plan" in users.columns else 0
+        int(users.loc[users["plan"] == "trial", "user_id"].nunique())
+        if "plan" in users.columns
+        else 0
     )
-    paid_users = int(subscriptions["user_id"].nunique()) if "user_id" in subscriptions.columns else 0
+    paid_users = (
+        int(subscriptions["user_id"].nunique()) if "user_id" in subscriptions.columns else 0
+    )
 
     conversion_rate = round((paid_users / trial_users) * 100.0, 2) if trial_users else 0.0
     average_session_duration_minutes = _average_session_duration_minutes(sessions)
@@ -126,9 +142,15 @@ def calculate_kpis(bundle: AnalyticsBundle) -> KPIResult:
     if latest_timestamp is None:
         latest_timestamp = pd.Timestamp.utcnow().tz_localize(None)
 
-    daily_active_users = _distinct_users_in_window(sessions, "login_time", latest_timestamp, WINDOW_DAYS["daily"])
-    weekly_active_users = _distinct_users_in_window(sessions, "login_time", latest_timestamp, WINDOW_DAYS["weekly"])
-    monthly_active_users = _distinct_users_in_window(sessions, "login_time", latest_timestamp, WINDOW_DAYS["monthly"])
+    daily_active_users = _distinct_users_in_window(
+        sessions, "login_time", latest_timestamp, WINDOW_DAYS["daily"]
+    )
+    weekly_active_users = _distinct_users_in_window(
+        sessions, "login_time", latest_timestamp, WINDOW_DAYS["weekly"]
+    )
+    monthly_active_users = _distinct_users_in_window(
+        sessions, "login_time", latest_timestamp, WINDOW_DAYS["monthly"]
+    )
 
     retention_rate = _retention_rate(sessions, latest_timestamp)
     feature_adoption = _feature_adoption(feature_usage, total_users)
