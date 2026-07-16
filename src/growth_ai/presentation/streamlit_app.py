@@ -40,9 +40,9 @@ def _render_feature_chart(feature_adoption: dict[str, float]) -> None:
         st.info("No feature-usage data is available yet.")
         return
 
-    frame = pd.DataFrame(feature_adoption.items(), columns=["feature", "adoption_rate_pct"]).sort_values(
-        "adoption_rate_pct", ascending=False
-    )
+    frame = pd.DataFrame(
+        feature_adoption.items(), columns=["feature", "adoption_rate_pct"]
+    ).sort_values("adoption_rate_pct", ascending=False)
     st.bar_chart(frame.set_index("feature"))
 
 

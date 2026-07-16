@@ -42,7 +42,12 @@ def _write_pdf(report: KPIResult, output_path: Path) -> None:
                 ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1f2937")),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
                 ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#d1d5db")),
-                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.whitesmoke, colors.HexColor("#f3f4f6")]),
+                (
+                    "ROWBACKGROUNDS",
+                    (0, 1),
+                    (-1, -1),
+                    [colors.whitesmoke, colors.HexColor("#f3f4f6")],
+                ),
                 ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
                 ("PADDING", (0, 0), (-1, -1), 8),
             ]
