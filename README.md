@@ -1,4 +1,4 @@
-# Growth.ai
+# Conversion-IQ
 
 Growth.ai is a Python analytics foundation for studying six months of SaaS trial activity, feature usage, and subscription conversion data. The goal is to turn raw operational data into clean datasets, reliable KPIs, and a dashboard that helps product teams understand what drives upgrades.
 
